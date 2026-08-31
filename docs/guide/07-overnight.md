@@ -21,7 +21,7 @@ Walk through what each line buys you:
 - "done means..." turns the goal into checks every iteration can run.
 - "fresh worktree off `<base>`" keeps the run from colliding with anything else you have open.
 - "don't ask me before committing" pre-answers the permission the agent would otherwise block on.
-- "loop until done" asks for ZCode's scheduled automations (the Cron tools; a built-in, not a pstack skill). The [Autonomous run playbook](../../skills/poteto-mode/playbooks/autonomous-run.md) registers one to re-check the finish condition on a heartbeat and deletes it when the predicate passes.
+- "loop until done" asks for opencode's scheduled automations (the Cron tools; a built-in, not a pstack skill). The [Autonomous run playbook](../../skills/poteto-mode/playbooks/autonomous-run.md) registers one to re-check the finish condition on a heartbeat and deletes it when the predicate passes.
 - The escape hatch lets it stop at a genuine dead end and write up why, which beats eight hours of creative goal reinterpretation.
 
 Because you'll review this work after stepping away, `/poteto-mode` routes it through [`/figure-it-out`](../../skills/figure-it-out/SKILL.md), which designs the run's phases before any code and wires in the decision log.

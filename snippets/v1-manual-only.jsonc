@@ -1,0 +1,65 @@
+{
+  // pstack: make the 39 manual-only skills invisible to the model on opencode V1.
+  //
+  // V1 has no frontmatter mechanism for manual-only skills, so every installed
+  // skill is advertised to the model. This fragment uses the one mechanism V1
+  // does have - per-agent skill permission - to deny the model each manual-only
+  // skill. Explicit user invocation (typing /<name>) still works; only the
+  // model's advertised list shrinks.
+  //
+  // Merge this into your opencode.json. It applies per agent: "build" is the
+  // primary agent shown here. Repeat the "permission" block for any other
+  // primary agent you use (e.g. "plan") if you want the same strictness there.
+  //
+  // No-op on opencode2: V2 honors the "metadata: opencode/autoinvoke: false"
+  // frontmatter already in these skills, so this snippet is unnecessary there.
+  //
+  // To re-expose a skill to the model, delete its line below.
+  "agent": {
+    "build": {
+      "permission": {
+        "skill": {
+          "architect": "deny",
+          "arena": "deny",
+          "automate-me": "deny",
+          "blast-radius": "deny",
+          "bro": "deny",
+          "create-verification-skill": "deny",
+          "figure-it-out": "deny",
+          "interrogate": "deny",
+          "maintain-verification-skill": "deny",
+          "no-comments": "deny",
+          "poteto-mode": "deny",
+          "principle-boundary-discipline": "deny",
+          "principle-build-the-lever": "deny",
+          "principle-encode-lessons-in-structure": "deny",
+          "principle-exhaust-the-design-space": "deny",
+          "principle-experience-first": "deny",
+          "principle-fix-root-causes": "deny",
+          "principle-foundational-thinking": "deny",
+          "principle-guard-the-context-window": "deny",
+          "principle-laziness-protocol": "deny",
+          "principle-make-operations-idempotent": "deny",
+          "principle-migrate-callers-then-delete-legacy-apis": "deny",
+          "principle-minimize-reader-load": "deny",
+          "principle-model-the-domain": "deny",
+          "principle-never-block-on-the-human": "deny",
+          "principle-outcome-oriented-execution": "deny",
+          "principle-prove-it-works": "deny",
+          "principle-redesign-from-first-principles": "deny",
+          "principle-separate-before-serializing-shared-state": "deny",
+          "principle-sequence-verifiable-units": "deny",
+          "principle-subtract-before-you-add": "deny",
+          "principle-type-system-discipline": "deny",
+          "recall": "deny",
+          "reflect": "deny",
+          "show-me-your-work": "deny",
+          "swarm": "deny",
+          "tdd": "deny",
+          "teach": "deny",
+          "technical-writing": "deny"
+        }
+      }
+    }
+  }
+}
