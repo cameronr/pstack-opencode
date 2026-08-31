@@ -330,13 +330,20 @@ function parseComment(value: unknown): T.ReviewComment {
     createdAt: string(object.createdAt, "review comment.createdAt"),
   };
 }
+const prAuthor = (process.env.PSTACK_PR_AUTHOR ?? "zcode").toLowerCase();
+const automationIdPattern = new RegExp(
+  (process.env.PSTACK_AUTOMATION_ID ?? "ZCODE_AUTOMATION_ID").replace(
+    /[.*+?^${}()|[\]\\]/g,
+    "\\$&"
+  ) + ":\\s*([a-zA-Z0-9_.:-]+)"
+);
 function isBugbot(comment: T.ReviewComment | null): boolean {
   if (comment === null) return false;
   const author = (comment.authorLogin ?? "").toLowerCase();
   const body = comment.body.toLowerCase();
   return (
     author.includes("bugbot") ||
-    ((author === "cursor" || author === "zcode") &&
+    ((author === "cursor" || author === prAuthor) &&
       [
         "bugbot",
         "cursor_automation_id",
@@ -352,7 +359,7 @@ function passKey(comment: T.ReviewComment | null): string | null {
   for (const pattern of [
     /RUN_ID:\s*([a-zA-Z0-9_.:-]+)/,
     /CURSOR_AUTOMATION_ID:\s*([a-zA-Z0-9_.:-]+)/,
-    /ZCODE_AUTOMATION_ID:\s*([a-zA-Z0-9_.:-]+)/,
+    automationIdPattern,
   ]) {
     const match = pattern.exec(comment.body);
     if (match?.[1]) return match[1];

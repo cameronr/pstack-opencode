@@ -60,14 +60,17 @@ git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt;
 	[ -z "$pr" ] && pr="-"
 
 	# Most recent chat that operated in this worktree: a session rooted at
-	# the worktree, or a V1 text part that mentions it. Match the path
-	# followed by "/" or a quote so glint-482 does not match glint-482-r37.
+	# the worktree, or a V1 text part / V2 message that mentions it. Match the
+	# path followed by "/" or a quote so glint-482 does not match glint-482-r37,
+	# and escape LIKE wildcards so glint_r37 does not match glintXr37.
 	# Best-effort: table generations that are absent are skipped.
 	last="-"; last_ts=0
 	if [ -r "$db" ]; then
 		wts=${wt//\'/\'\'}
+		# LIKE-escape: backslash, then % and _, with ESCAPE '\' in the clause.
+		wtl=${wts//\\/\\\\}; wtl=${wtl//%/\\%}; wtl=${wtl//_/\\_}
 		tables=$(sqlite3 "file:$db?mode=ro" \
-			"SELECT name FROM sqlite_master WHERE type='table' AND name IN ('session','session_v2','part');" 2>/dev/null)
+			"SELECT name FROM sqlite_master WHERE type='table' AND name IN ('session','session_v2','part','session_message');" 2>/dev/null)
 		terms=""
 		add() { [ -n "$terms" ] && terms="$terms UNION ALL"; terms="$terms$1"; }
 		printf '%s\n' "$tables" | grep -qx session && add "
@@ -76,7 +79,10 @@ git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt;
 			SELECT time_updated AS ts FROM session_v2 WHERE directory = '$wts'"
 		printf '%s\n' "$tables" | grep -qx part && add "
 			SELECT s.time_updated AS ts FROM part p JOIN session s ON s.id = p.session_id
-			WHERE p.data LIKE '%$wts/%' OR p.data LIKE '%$wts\"%'"
+			WHERE p.data LIKE '%$wtl/%' ESCAPE '\' OR p.data LIKE '%$wtl\"%' ESCAPE '\'"
+		printf '%s\n' "$tables" | grep -qx session_message && add "
+			SELECT s.time_updated AS ts FROM session_message m JOIN session_v2 s ON s.id = m.session_id
+			WHERE m.data LIKE '%$wtl/%' ESCAPE '\' OR m.data LIKE '%$wtl\"%' ESCAPE '\'"
 		if [ -n "$terms" ]; then
 			ts_ms=$(sqlite3 "file:$db?mode=ro" "SELECT MAX(ts) FROM ($terms);" 2>/dev/null)
 			if [ -n "$ts_ms" ] && [ "$ts_ms" != "NULL" ] && [ "$ts_ms" -gt 0 ] 2>/dev/null; then

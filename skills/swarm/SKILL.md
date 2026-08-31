@@ -27,7 +27,7 @@ Open a todolist with one entry per phase before launching anything.
 
 ## Phase B: Fan out
 
-Spawn all N workers in one message with `subagent_type: "poteto-agent"` (or the configured type). Instruct each worker to check out the starting branch itself when it must start from a non-default pushed branch.
+Spawn all N workers in one message with `background: true` and `subagent_type: "poteto-agent"` (or the configured type). Instruct each worker to check out the starting branch itself when it must start from a non-default pushed branch.
 
 Every brief stands alone. Include the goal, scope, exact slice or race arm, how to verify, and what to report. Reports use `PASS`, `ISSUES`, or `BLOCKED` with evidence.
 

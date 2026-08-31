@@ -13,7 +13,7 @@ Place validation, type narrowing, and error handling at system boundaries. Trust
 **The pattern:**
 - **At boundaries** (CLI args, config files, external APIs, network protocols): validate, return errors, handle defensively.
 - **Inside the system:** typed data, error propagation, no re-validation. Trust the types.
-- **Across the boundary.** Expose domain concepts, not the boundary's private representation. Keep generic mechanism inside and special-purpose policy at the edge.
+- **Across the boundary.** Expose domain concepts, not the boundary's private representation. Keep general-purpose mechanism inside and special-purpose policy at the edge.
 
 **Applications:**
 

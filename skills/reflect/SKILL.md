@@ -25,9 +25,16 @@ Skip when the conversation is trivial, off-topic, or already covered by an exist
 The parent finds its own session before fanning out. Sessions live in SQLite at `~/.local/share/opencode/opencode.db` (WAL mode, so query with `sqlite3` in read-only mode or copy the file first if the DB is live). Do not read other projects' sessions. That crosses workspace boundaries and reads private chats from unrelated projects.
 
 ```bash
+# <workspace-path> is spliced into the SQL: double any single quotes in it
+# (e.g. /a/'b' becomes /a/''b''), same escaping the audit scripts use.
 sqlite3 "file:$HOME/.local/share/opencode/opencode.db?mode=ro" \
-  "SELECT id, title, datetime(time_created/1000, 'unixepoch') FROM session
-   WHERE directory = '<workspace-path>' ORDER BY time_updated DESC LIMIT 10"
+  "SELECT id, title, datetime(time_created/1000, 'unixepoch')
+   FROM (SELECT id, title, time_created, time_updated FROM session
+         WHERE directory = '<workspace-path>'
+         UNION ALL
+         SELECT id, title, time_created, time_updated FROM session_v2
+         WHERE directory = '<workspace-path>')
+   ORDER BY time_updated DESC LIMIT 10"
 ```
 
 Two session generations: V1 (`session` + `message` + `part`; order messages and parts by `time_created`) and V2 (`session_v2` + `session_message`; order by `seq`). V1 text content lives in `part.data.text`; V2 embeds the whole message, content parts included, in `session_message.data`. Timestamps are ms epoch integers.
