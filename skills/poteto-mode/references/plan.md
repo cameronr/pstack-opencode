@@ -16,7 +16,7 @@ Read the **Principles** section of the `poteto-mode` skill end to end, and the l
 
 ## 2. Scope and constraints
 
-State your read of scope and constraints in one paragraph. Use `AskUserQuestion` only for genuinely ambiguous intent (the **never-block-on-the-human** principle skill); give concrete options with each open question.
+State your read of scope and constraints in one paragraph. Use the `question` tool only for genuinely ambiguous intent (the **never-block-on-the-human** principle skill); give concrete options with each open question.
 
 Resolve what is in scope vs explicitly out, technical or platform constraints, patterns to preserve, and the definition of done.
 
@@ -24,8 +24,8 @@ Resolve what is in scope vs explicitly out, technical or platform constraints, p
 
 Delegate codebase exploration (the **guard-the-context-window** principle skill).
 
-- Prefer `subagent_type: "poteto-agent"`. `general-purpose` is the fallback.
-- Pick the type per the configured roles in `~/.zcode/pstack-roles.md` (defaults `poteto-agent` for code, `general-purpose` for judgment, `Explore` for read-only exploration).
+- Prefer `subagent_type: "poteto-agent"`. `general` is the fallback.
+- Pick the type per the configured roles in `~/.config/opencode/pstack-roles.md` (defaults `poteto-agent` for code, `general` for judgment, `explore` for read-only exploration).
 
 Each explorer returns file pointers, conventions, dependencies, test infrastructure, and entry points. No inlined dumps.
 

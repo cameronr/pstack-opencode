@@ -22,31 +22,33 @@ Skip when the conversation is trivial, off-topic, or already covered by an exist
 
 ### 1. Locate the active transcript
 
-The parent finds its own transcript file before fanning out. Prefer a transcript directory inside the active workspace if one exists; otherwise look under `~/.zcode/cli/` for the current session's rollout files. Do not glob across other projects' session directories. That crosses workspace boundaries and reads private chats from unrelated projects.
+The parent finds its own session before fanning out. Sessions live in SQLite at `~/.local/share/opencode/opencode.db` (WAL mode, so query with `sqlite3` in read-only mode or copy the file first if the DB is live). Do not read other projects' sessions. That crosses workspace boundaries and reads private chats from unrelated projects.
 
 ```bash
-ls -t <agent-transcripts>/*.jsonl <agent-transcripts>/*/*.jsonl <agent-transcripts>/*/subagents/*.jsonl 2>/dev/null | head -10
+sqlite3 "file:$HOME/.local/share/opencode/opencode.db?mode=ro" \
+  "SELECT id, title, datetime(time_created/1000, 'unixepoch') FROM session
+   WHERE directory = '<workspace-path>' ORDER BY time_updated DESC LIMIT 10"
 ```
 
-Three transcript layouts: legacy flat (`<id>.jsonl`), current nested (`<id>/<id>.jsonl`), and subagent (`<parent>/subagents/<child>.jsonl`).
+Two session generations: V1 (`session` + `message` + `part`; order messages and parts by `time_created`) and V2 (`session_v2` + `session_message`; order by `seq`). V1 text content lives in `part.data.text`; V2 embeds the whole message, content parts included, in `session_message.data`. Timestamps are ms epoch integers.
 
-For each candidate, read the first JSONL line and check that `message.content[0].text` contains the conversation's opening user prompt. Take the matching path. If no path resolves, write a tight digest of the session and pass that instead.
+For each candidate, check that its first user message contains the conversation's opening user prompt. Take the matching session id. If no session resolves, write a tight digest of the session and pass that instead.
 
 ### 2. Spawn three reviewers in parallel
 
-One message, three `Agent` calls, one distinct `subagent_type` each. Reviewers need MCP access for context lookups (tickets, chat threads, observability traces referenced in the transcript), so use types with full tool access. The prompt forbids file writes; the parent applies edits.
+One message, three `task` calls, one distinct `subagent_type` each. Reviewers need MCP access for context lookups (tickets, chat threads, observability traces referenced in the transcript), so use types with full tool access. The prompt forbids file writes; the parent applies edits.
 
 | Lens | `subagent_type` | Prompt template |
 |---|---|---|
-| Judgment | your configured reflect-judgment type (default `general-purpose`) | `references/judgment-reviewer.md` |
+| Judgment | your configured reflect-judgment type (default `general`) | `references/judgment-reviewer.md` |
 | Tooling | your configured reflect-tooling type (default `code-reviewer`) | `references/tooling-reviewer.md` |
-| Divergent | your configured reflect-judgment type (default `general-purpose`) | `references/divergent-reviewer.md` |
+| Divergent | your configured reflect-judgment type (default `general`) | `references/divergent-reviewer.md` |
 
-Pass each template verbatim, substituting the transcript path or digest where marked. Reviewers return findings in the `Agent` response body.
+Pass each template verbatim, substituting the session id or digest where marked. Reviewers return findings in the `task` response body.
 
 ### 3. Synthesize
 
-One `Agent` call, `subagent_type: general-purpose` (or your configured reflect-judgment type). The synthesizer's quality check includes spot-verifying citations, which can require MCP access, so keep full tool access. Use `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. The synthesizer returns a structured Accepted / Rejected / Backlog list.
+One `task` call, `subagent_type: general` (or your configured reflect-judgment type). The synthesizer's quality check includes spot-verifying citations, which can require MCP access, so keep full tool access. Use `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. The synthesizer returns a structured Accepted / Rejected / Backlog list.
 
 ### 4. Structural enforcement check
 

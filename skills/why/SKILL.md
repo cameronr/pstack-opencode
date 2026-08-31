@@ -97,7 +97,7 @@ Capture this as seed context (file paths, symbols, commits, PR numbers, linked t
 
 ### Discovery
 
-Before spawning investigators, list the MCPs available in this session. Use the `mcp__*` tools exposed in the current session when present. Otherwise read the MCP configuration ZCode loads: `mcp.servers` in `~/.zcode/cli/config.json` (user scope), then `mcp.servers` in the workspace `.zcode/config.json` (or the `.agents/mcp.json` fallback), then any servers contributed by enabled plugins.
+Before spawning investigators, list the MCPs available in this session. Use the MCP tools exposed in the current session (named `<server>_<tool>`) when present. Otherwise read the MCP configuration opencode loads: `mcp` in `~/.config/opencode/opencode.json` (user scope), then `mcp` in the project `opencode.json`, then any servers contributed by enabled plugins.
 
 Map each available MCP to one evidence category:
 
@@ -116,7 +116,7 @@ Aim for a complete **coverage map**, not a minimal one. A null result from an is
 Launch all matching investigators in a single message so they run concurrently. One investigator per category lets each specialize in one tool's query vocabulary and result shape. Don't ask one agent to cover multiple MCPs.
 
 Subagent config (each):
-- `subagent_type`: `general-purpose` (or your configured why-investigators type). Use a type with full tool access: investigators need MCP tools to query evidence sources. Investigators still shouldn't write anything. That's a posture, not a sandbox.
+- `subagent_type`: `general` (or your configured why-investigators type). Use a type with full tool access: investigators need MCP tools to query evidence sources. Investigators still shouldn't write anything. That's a posture, not a sandbox.
 
 Each investigator gets:
 1. The base prompt from `references/investigator-prompt.md`
@@ -160,7 +160,7 @@ If your scope assessment suggests a single-commit trivial target where the PR de
 
 Spawn one synthesizer subagent:
 
-- `subagent_type`: `general-purpose` (or your configured why-synthesizer type). The synthesizer's quality check spot-verifies citations, which can require MCP access, so keep full tool access.
+- `subagent_type`: `general` (or your configured why-synthesizer type). The synthesizer's quality check spot-verifies citations, which can require MCP access, so keep full tool access.
 
 The synthesizer gets:
 1. The investigator findings, including any null results and any categories skipped with justification

@@ -22,9 +22,8 @@ prs=$(mktemp)
 gh pr list --author "@me" --state all --limit 1000 \
 	--json number,state,headRefName 2>/dev/null > "$prs" || echo "[]" > "$prs"
 
-# Transcripts dir: ~/.cursor/projects/<slugified-repo-path>/agent-transcripts.
-slug=$(printf '%s' "$main_wt" | sed 's#^/##; s#/#-#g')
-transcripts="$HOME/.cursor/projects/$slug/agent-transcripts"
+# Sessions DB: ~/.local/share/opencode/opencode.db (WAL mode; query read-only).
+db="$HOME/.local/share/opencode/opencode.db"
 now=$(date +%s)
 
 printf "SIZE\tAGE\tMERGED\tDIRTY\tREMOTE\tPR\tLAST_CHAT\tBUCKET\tWORKTREE\n"
@@ -60,14 +59,30 @@ git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt;
 		'.[] | select(.headRefName==$b) | "#\(.number)/\(.state)"' "$prs" 2>/dev/null | head -1)
 	[ -z "$pr" ] && pr="-"
 
-	# Most recent chat whose transcript operated in this worktree. Match path
+	# Most recent chat that operated in this worktree: a session rooted at
+	# the worktree, or a V1 text part that mentions it. Match the path
 	# followed by "/" or a quote so glint-482 does not match glint-482-r37.
+	# Best-effort: table generations that are absent are skipped.
 	last="-"; last_ts=0
-	if [ -d "$transcripts" ]; then
-		f=$(rg -l -e "${wt}/" -e "${wt}\"" "$transcripts" 2>/dev/null \
-			| xargs stat -f '%m %N' 2>/dev/null | sort -rn | head -1)
-		if [ -n "$f" ]; then last_ts=$(echo "$f" | awk '{print $1}')
-			last=$(date -r "$last_ts" '+%Y-%m-%d' 2>/dev/null); fi
+	if [ -r "$db" ]; then
+		wts=${wt//\'/\'\'}
+		tables=$(sqlite3 "file:$db?mode=ro" \
+			"SELECT name FROM sqlite_master WHERE type='table' AND name IN ('session','session_v2','part');" 2>/dev/null)
+		terms=""
+		add() { [ -n "$terms" ] && terms="$terms UNION ALL"; terms="$terms$1"; }
+		printf '%s\n' "$tables" | grep -qx session && add "
+			SELECT time_updated AS ts FROM session WHERE directory = '$wts'"
+		printf '%s\n' "$tables" | grep -qx session_v2 && add "
+			SELECT time_updated AS ts FROM session_v2 WHERE directory = '$wts'"
+		printf '%s\n' "$tables" | grep -qx part && add "
+			SELECT s.time_updated AS ts FROM part p JOIN session s ON s.id = p.session_id
+			WHERE p.data LIKE '%$wts/%' OR p.data LIKE '%$wts\"%'"
+		if [ -n "$terms" ]; then
+			ts_ms=$(sqlite3 "file:$db?mode=ro" "SELECT MAX(ts) FROM ($terms);" 2>/dev/null)
+			if [ -n "$ts_ms" ] && [ "$ts_ms" != "NULL" ] && [ "$ts_ms" -gt 0 ] 2>/dev/null; then
+				last_ts=$((ts_ms / 1000))
+				last=$(date -r "$last_ts" '+%Y-%m-%d' 2>/dev/null); fi
+		fi
 	fi
 	recent=$([ "$last_ts" -gt 0 ] 2>/dev/null && [ $(( (now - last_ts) / 86400 )) -le 4 ] && echo yes || echo no)
 

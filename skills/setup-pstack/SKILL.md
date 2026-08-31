@@ -1,33 +1,33 @@
 ---
 name: setup-pstack
-description: Configure which subagent types pstack uses per role. Detects the agent types available in this session and writes ~/.zcode/pstack-roles.md, an override layer the skills read. Use for /setup-pstack, "configure pstack agents", or changing pstack's subagent choices.
+description: Configure which subagent types pstack uses per role. Detects the agent types available in this session and writes ~/.config/opencode/pstack-roles.md, an override layer the skills read. Use for /setup-pstack, "configure pstack agents", or changing pstack's subagent choices.
 ---
 
 # Setup pstack
 
-Write `~/.zcode/pstack-roles.md`, a plain file the pstack skills read on demand, that sets pstack's subagent type per role. The skills read it and fall back to their inline defaults when a line is absent, so this is an override layer, not a requirement.
+Write `~/.config/opencode/pstack-roles.md`, a plain file the pstack skills read on demand, that sets pstack's subagent type per role. The skills read it and fall back to their inline defaults when a line is absent, so this is an override layer, not a requirement.
 
-ZCode runs every subagent on the session model; there is no per-role model choice. What this file configures is the **subagent type** each role fans out to, which is where diversity comes from: a reviewer type reads a diff differently than an architect type or a general-purpose delegate.
+opencode runs every subagent on the session model unless the agent file sets its own `model`, so diversity comes from the subagent type and the prompt, not the model family. What this file configures is the **subagent type** each role fans out to: a reviewer type reads a diff differently than an architect type or a general delegate.
 
 ## Steps
 
 ### 1. Detect available subagent types
 
-Enumerate the `subagent_type` values you can pass to an `Agent` call in this session. The dependable sources, in order:
+Enumerate the `subagent_type` values you can pass to a `task` call in this session. The dependable sources, in order:
 
-1. Built-ins always present: `general-purpose`, `Explore`, `code-architect`, `code-explorer`, `code-reviewer`.
+1. Built-ins always present: `general`, `explore`, `code-architect`, `code-explorer`, `code-reviewer`.
 2. Types contributed by enabled plugins and declared in this session (pstack itself contributes `poteto-agent` and `comment-sicko`).
-3. Agent definitions ZCode scans outside plugins (for example `~/.zcode/cli/agents/`).
+3. Agent definitions opencode loads outside plugins (for example `~/.config/opencode/agent/`).
 
-Never write a type you have not confirmed exists. A role line pointing at a type the `Agent` tool rejects breaks every delegation that reads it.
+Never write a type you have not confirmed exists. A role line pointing at a type the `task` tool rejects breaks every delegation that reads it.
 
 ### 2. Load current state
 
-The default role-to-type mapping is the shape shown in step 5 below. If `~/.zcode/pstack-roles.md` already exists, read it and treat its values as the current choices. Otherwise start from those defaults.
+The default role-to-type mapping is the shape shown in step 5 below. If `~/.config/opencode/pstack-roles.md` already exists, read it and treat its values as the current choices. Otherwise start from those defaults.
 
 ### 3. Map and confirm
 
-Show every role with its current type, marking any type not in the detected set as needing a choice. Ask whether to accept as-is or change specific roles, offering the detected types as the options. Prefer `AskUserQuestion` over free text. For panel roles (how critics, arena runners, architect runners, interrogate reviewers) the value is a list, and one subagent runs per entry, so the list length sets the fan-out; entries may repeat a type when you want volume over diversity. `arena cross-judge pool` is also a list, and Arena picks one value from it. `swarm workers` is the default type for every worker unless a race or comparison assigns another per arm.
+Show every role with its current type, marking any type not in the detected set as needing a choice. Ask whether to accept as-is or change specific roles, offering the detected types as the options. Prefer the `question` tool over free text. For panel roles (how critics, arena runners, architect runners, interrogate reviewers) the value is a list, and one subagent runs per entry, so the list length sets the fan-out; entries may repeat a type when you want volume over diversity. `arena cross-judge pool` is also a list, and Arena picks one value from it. `swarm workers` is the default type for every worker unless a race or comparison assigns another per arm.
 
 ### 4. Validate
 
@@ -35,7 +35,7 @@ Every type written must be in the detected set. If a chosen type is not availabl
 
 ### 5. Write the file
 
-Write `~/.zcode/pstack-roles.md`, overwriting the whole file so re-runs stay idempotent. Shape:
+Write `~/.config/opencode/pstack-roles.md`, overwriting the whole file so re-runs stay idempotent. Shape:
 
 ```markdown
 # pstack per-role subagent choices (overrides skill defaults)
@@ -46,20 +46,20 @@ feature, refactoring: poteto-agent
 bug-fix: poteto-agent
 perf-issue: poteto-agent
 hillclimb: poteto-agent
-judgment and prose: general-purpose
+judgment and prose: general
 hardest tasks: poteto-agent
-how explorer: Explore
-how explainer: general-purpose
-how critics: code-reviewer, poteto-agent, general-purpose
-why investigators: Explore
-why synthesizer: general-purpose
+how explorer: explore
+how explainer: general
+how critics: code-reviewer, poteto-agent, general
+why investigators: explore
+why synthesizer: general
 reflect tooling: code-reviewer
-reflect judgment, divergent, synthesizer: general-purpose
-arena runners: poteto-agent, code-reviewer, general-purpose
-arena cross-judge pool: code-reviewer, general-purpose
+reflect judgment, divergent, synthesizer: general
+arena runners: poteto-agent, code-reviewer, general
+arena cross-judge pool: code-reviewer, general
 swarm workers: poteto-agent
-architect runners: code-architect, poteto-agent, general-purpose
-interrogate reviewers: code-reviewer, code-architect, general-purpose
+architect runners: code-architect, poteto-agent, general
+interrogate reviewers: code-reviewer, code-architect, general
 ```
 
 ### 6. Confirm

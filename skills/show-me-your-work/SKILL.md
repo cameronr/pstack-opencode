@@ -53,7 +53,7 @@ Commit it only when the work is ambitious enough that a reviewer needs the trail
 
 ## Audit the log against the transcript
 
-At the end of the run, before handing back, check the log told the truth. Read this run's transcript under the active workspace's session transcripts (stored under `~/.zcode/cli/`). Don't glob across other workspaces' session directories; that reads unrelated private chats. Walk the log against what actually happened:
+At the end of the run, before handing back, check the log told the truth. Read this run's transcript from the workspace's sessions in `~/.local/share/opencode/opencode.db` (query with `sqlite3` in read-only mode, filtering `session.directory` / `session_v2.directory` on the workspace path). Don't read other workspaces' sessions; that reads unrelated private chats. Walk the log against what actually happened:
 
 - Every row maps to a real action. Cut invented or aspirational entries.
 - Each row's evidence resolves and shows what the row claims.
