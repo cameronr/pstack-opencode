@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Interrogate
 
-Spawn one reviewer per configured subagent type to adversarially review code changes. Each reviewer gets the same prompt and rubric. opencode runs every subagent on the session model unless the agent file sets its own `model`, so the adversarial signal comes from the reviewers' distinct postures and tool scopes (a reviewer type reads a diff differently than an architect type), not assigned personas. Agreement across independently spawned reviewers is high-confidence signal; single-reviewer findings are worth reading but lower confidence.
+Spawn one reviewer per configured subagent type to adversarially review code changes. Each reviewer gets the same prompt and rubric. opencode runs every subagent on the session model unless its agent file or config (`agent.<name>.model` in `opencode.json`) sets a model, so the adversarial signal comes from the reviewers' distinct postures and tool scopes (a reviewer type reads a diff differently than an architect type), not assigned personas. Agreement across independently spawned reviewers is high-confidence signal; single-reviewer findings are worth reading but lower confidence.
 
 The deliverable is a synthesized verdict. Do NOT auto-apply changes.
 

@@ -1,13 +1,13 @@
 ---
 name: setup-pstack
-description: Configure which subagent types pstack uses per role. Detects the agent types available in this session and writes ~/.config/opencode/pstack-roles.md, an override layer the skills read. Use for /setup-pstack, "configure pstack agents", or changing pstack's subagent choices.
+description: Configure which subagent types pstack uses per role, and optionally which model each role's agents run on. Detects the agent types available in this session and writes ~/.config/opencode/pstack-roles.md, an override layer the skills read. Use for /setup-pstack, "configure pstack agents", or changing pstack's subagent choices.
 ---
 
 # Setup pstack
 
-Write `~/.config/opencode/pstack-roles.md`, a plain file the pstack skills read on demand, that sets pstack's subagent type per role. The skills read it and fall back to their inline defaults when a line is absent, so this is an override layer, not a requirement.
+Write `~/.config/opencode/pstack-roles.md`, a plain file the pstack skills read on demand, that sets pstack's subagent type per role. The skills read it and fall back to their inline defaults when a line is absent, so this is an override layer, not a requirement. Optionally, per-agent model overrides go to `~/.config/opencode/opencode.json` (step 6).
 
-opencode runs every subagent on the session model unless the agent file sets its own `model`, so diversity comes from the subagent type and the prompt, not the model family. What this file configures is the **subagent type** each role fans out to: a reviewer type reads a diff differently than an architect type or a general delegate.
+opencode runs every subagent on the session model unless its agent file or its config entry (`agent.<name>.model` in `opencode.json`) sets a model, so by default diversity comes from the subagent type and the prompt, not the model. What this file configures is the **subagent type** each role fans out to: a reviewer type reads a diff differently than an architect type or a general delegate.
 
 ## Steps
 
@@ -62,10 +62,22 @@ architect runners: code-architect, poteto-agent, general
 interrogate reviewers: code-reviewer, code-architect, general
 ```
 
-### 6. Confirm
+### 6. Models (optional)
 
-Re-read the file you wrote and echo the final table to the user. State the fallback rule (absent line = skill default) and that rerunning `/setup-pstack` is always safe.
+Ask once whether the user wants per-role models. Most users run every subagent on the session model; that stays the default. Do not push per-role models.
 
-### 7. Offer a verification skill (optional)
+On yes, determine the models actually available: read the `provider` and `model` keys in `~/.config/opencode/opencode.json` and the project `opencode.json`, and offer the `provider/model` ids configured there plus the current session model. Never offer a model id you have not seen in those files or in the session.
+
+For each role the user wants to change, map the role's agent type(s) from step 5 to the chosen model and write `agent.<agent-name>.model` as a "provider/model" string in `~/.config/opencode/opencode.json`. This covers opencode built-ins (`general`, `explore`, `build`, `plan`) and pstack's custom agents (`poteto-agent`, `comment-sicko`, `code-reviewer`, `code-architect`). Model overrides are per agent, not per role: setting a model on an agent affects every role that uses it, so say so when a role's type list shares an agent with other roles.
+
+`opencode.json` is a merge target, not a rewrite. Preserve every existing key (`provider`, `permission`, `mcp`, ...), create the `agent` object if absent, and touch only the `agent.<name>.model` entries for the chosen roles. Re-runs must be idempotent: same choices, same file.
+
+Precedence: an agent file with its own `model` frontmatter beats the config override. Deleting the `agent.<name>.model` entry restores session-model inheritance.
+
+### 7. Confirm
+
+Re-read the file you wrote and echo the final table to the user. If step 6 wrote model overrides, echo them (agent name -> provider/model) and the precedence rule (agent file `model` frontmatter beats config; deleting the entry restores session-model inheritance). State the fallback rule (absent line = skill default) and that rerunning `/setup-pstack` is always safe.
+
+### 8. Offer a verification skill (optional)
 
 Check whether the project has a way to drive the real app for proof (a `verify-*` skill, or an existing harness). If not, offer once: "want a project-local verification skill, so agents can drive the app the way a user does and prove changes work? I can generate one with /create-verification-skill." On yes, invoke `/create-verification-skill` (resolves wherever pstack is installed — workspace, user, or plugin). On no, move on without pushing.
