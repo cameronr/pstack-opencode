@@ -59,6 +59,25 @@ Pick one:
 
 Run the `setup-pstack` skill (`/setup-pstack`). It detects the agent types available in your session, maps each pstack role (code delegates, judgment, the review panels) to a type, and writes `~/.config/opencode/pstack-roles.md`, the override layer the skills read. It can also set per-role models in `opencode.json` if you want them.
 
+## Syncing with upstream
+
+This repo is a port of [cursor/plugins/pstack](https://github.com/cursor/plugins/tree/main/pstack). The port applied a mechanical convention mapping (tool names, subagent types, paths, dual frontmatter) plus one-off semantic hand edits (transcript rewrites, cloud-agent -> background-subagent rewrites, model -> subagent-type wording). `scripts/check-upstream.py` fetches upstream, applies the mechanical mapping, and diffs the result against this repo, so the report shows only what upstream changed that we have not absorbed:
+
+```sh
+python3 scripts/check-upstream.py                          # clone github.com/cursor/plugins (shallow, sparse)
+python3 scripts/check-upstream.py /path/to/cursor/plugins  # local checkout (must contain pstack/skills/)
+python3 scripts/check-upstream.py /path/to/pstack --out /tmp/report
+```
+
+Reading the report (per-file diffs land in `drift-report/`, one `.diff` per skill or agent):
+
+- **ADDED-UPSTREAM** - new upstream skills/agents: candidates to import. Take the mapped file from the diff (or re-run against a local checkout and copy from there), re-apply any semantic edits the port would need, and commit. Skip the ones built on Cursor-only features (e.g. webhook routines).
+- **CHANGED** - upstream modified a file we also have. Read the diff; import the upstream change on top of our mapped conventions.
+- **CHANGED ... [SEMANTIC]** - the file also carries one-off port edits the mapping cannot reproduce (the script lists them in `SEMANTIC`). When upstream touches one of these, the diff mixes upstream drift with our own edits; re-apply the semantic edits by hand after importing.
+- **PORT-ONLY** - in this repo, not upstream. Expected for port additions (`code-reviewer`, `code-architect`); no action.
+
+The check always exits 0 when it completes (drift or not); non-zero means an operational failure (bad source, clone failure).
+
 ## Not ported
 
 - `automations/benny/` - a Cursor scheduled-automation config, kept in the repo for reference. opencode has no equivalent today; the natural future is a system cron entry that calls `opencode run` with benny's prompts.
