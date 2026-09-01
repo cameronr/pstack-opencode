@@ -174,6 +174,14 @@ MAP_RULES = LAYER1_CURSOR_TO_ZCODE + LAYER2_ZCODE_TO_OPENCODE
 DMI_RE = re.compile(r"(?m)^(disable-model-invocation: true)\n")
 DMI_INSERT = r"\1\nmetadata:\n  opencode/autoinvoke: false\n"
 
+# V2 slash commands: the 5 model-invocable skills get an explicit
+# `slash: true` inserted directly after the description line. The V2 TUI
+# slash palette only lists skills that set the key explicitly (no default);
+# V1 ignores it (and V1 never lists skills in the / palette at all).
+SLASH_SKILLS = {"how", "why", "setup-pstack", "typescript-best-practices", "unslop"}
+DESC_RE = re.compile(r"(?m)^(description: .*)\n")
+SLASH_INSERT = r"\1\nslash: true\n"
+
 # ---------------------------------------------------------------------------
 # Semantic port edits: one-off hand edits the mapping cannot reproduce.
 # When upstream touches one of these, the mapped diff will show the port's
@@ -262,7 +270,7 @@ def resolve_upstream_pstack(source: str, tmp: pathlib.Path) -> pathlib.Path:
 _PROTECTED = "\x00protect\x00"
 
 
-def map_text(text: str, is_skill_md: bool) -> str:
+def map_text(text: str, is_skill_md: bool, skill_name: str = "") -> str:
     # protect English phrases the type-name mapping must not touch
     text = text.replace("general-purpose mechanism", _PROTECTED)
     for old, new in MAP_RULES:
@@ -271,6 +279,8 @@ def map_text(text: str, is_skill_md: bool) -> str:
     text = text.replace(_PROTECTED, "general-purpose mechanism")
     if is_skill_md:
         text = DMI_RE.sub(DMI_INSERT, text)
+        if skill_name in SLASH_SKILLS:
+            text = DESC_RE.sub(SLASH_INSERT, text, count=1)
     return text
 
 
@@ -287,7 +297,8 @@ def map_upstream(pstack: pathlib.Path, mapped: pathlib.Path) -> None:
             text = p.read_text(encoding="utf-8")
         except (UnicodeDecodeError, OSError):
             continue  # binary or unreadable: leave as-is
-        new = map_text(text, p.name == "SKILL.md")
+        is_skill_md = p.name == "SKILL.md"
+        new = map_text(text, is_skill_md, p.parent.name if is_skill_md else "")
         if new != text:
             p.write_text(new, encoding="utf-8")
 

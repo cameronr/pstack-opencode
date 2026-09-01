@@ -38,6 +38,7 @@ The `skills/` and `agents/` content is harness-neutral text: no V1/V2 branching 
 1. **Frontmatter is the V2 seam.** The 39 manual-only skills carry both the legacy `disable-model-invocation: true` (harmless on V2, documents intent) and `metadata: opencode/autoinvoke: false` (honored by V2). V1 ignores both.
 2. **The installer is the V1 seam.** Both versions find skills/agents in the same directories; `install.sh` targets them.
 3. **The snippet is the V1 strictness seam** (below).
+4. **Slash commands are explicit on V2.** The current opencode2 beta lists a skill in the TUI's `/` palette only when its frontmatter sets `slash: true` (no default is applied when the key is omitted, despite the docs claiming a default of true). The 5 model-invocable skills set it and appear as `/` commands; the 39 manual-only ones do not and are reached via the `/skills` dialog. V1 ignores the key and never lists skills in the `/` palette (the TUI filters skill-sourced commands out by design); use the `/skills` dialog or ask in chat.
 
 ## The V1 manual-only gap, and the snippet
 

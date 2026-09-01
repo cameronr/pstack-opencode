@@ -52,8 +52,8 @@ Pick one:
 
 ## Behavior by version
 
-- **V1** advertises all 44 skills to the model; there is no frontmatter mechanism for manual-only skills. If you want the 39 manual-only skills invisible to the model (explicit `/name` invocation still works), merge [snippets/v1-manual-only.jsonc](snippets/v1-manual-only.jsonc) into your `opencode.json`.
-- **opencode2** honors the `metadata: opencode/autoinvoke: false` frontmatter in the 39 manual-only skills, so they stay out of the model's advertised list and appear in the command catalog instead. The V1 snippet is a no-op there.
+- **V1** advertises all 44 skills to the model; there is no frontmatter mechanism for manual-only skills. If you want the 39 manual-only skills invisible to the model, merge [snippets/v1-manual-only.jsonc](snippets/v1-manual-only.jsonc) into your `opencode.json`. V1 never lists skills in the `/` palette (the TUI filters skill-sourced commands out by design); reach them via the `/skills` dialog or by asking in chat.
+- **opencode2** honors the `metadata: opencode/autoinvoke: false` frontmatter in the 39 manual-only skills, so they stay out of the model's advertised list. The current opencode2 beta only lists a skill in the `/` palette when its frontmatter sets `slash: true` explicitly (the docs claim a default of true, but the beta requires it explicit); the 5 model-invocable skills set it, and the 39 manual-only ones are reached via the `/skills` dialog. The V1 snippet is a no-op there.
 
 ## Setup
 
