@@ -1,6 +1,6 @@
 # pstack (opencode port)
 
-pstack is a set of rigorous agent workflows: engineering principles, playbooks, and subagents that make an agent work like a senior engineer instead of a code generator. It routes work through `/poteto-mode`, which picks a playbook, runs the other skills as steps, and demands evidence. Ported from [poteto's original](https://github.com/backnotprop/pstack) (MIT) via the ZCode port; this repo is a standalone, installable opencode port.
+pstack is a set of rigorous agent workflows: engineering principles, playbooks, and subagents that make an agent work like a senior engineer instead of a code generator. It routes work through `/poteto-mode`, which picks a playbook, runs the other skills as steps, and demands evidence. Ported from [poteto's original](https://github.com/backnotprop/pstack) (MIT) via the [ZCode port](https://github.com/Luks3110/pstack-zcode/); this repo is a standalone, installable opencode port.
 
 ## Contents
 
@@ -38,7 +38,7 @@ Pick one:
 
    Symlinks are absolute: moving the repo breaks them. Re-run the installer from the new location.
 
-    **Updating:** re-run the installer after `git pull` - it prunes items removed upstream and leaves your own skills/agents untouched. With `--link`, `git pull` alone suffices.
+   **Updating:** re-run the installer after `git pull` - it prunes items removed upstream and leaves your own skills/agents untouched. With `--link`, `git pull` alone suffices.
 
 3. **opencode2 only: point the config at the repo** (no copy at all):
 
@@ -64,8 +64,8 @@ Run the `setup-pstack` skill (`/setup-pstack`). It detects the agent types avail
 This repo is a port of [backnotprop/pstack](https://github.com/backnotprop/pstack), the original standalone repo. The port applied a mechanical convention mapping (tool names, subagent types, paths, dual frontmatter) plus one-off semantic hand edits (transcript rewrites, cloud-agent -> background-subagent rewrites, model -> subagent-type wording). `scripts/check-upstream.py` fetches upstream, applies the mechanical mapping, and diffs the result against this repo, so the report shows only what upstream changed that we have not absorbed:
 
 ```sh
-python3 scripts/check-upstream.py                          # clone github.com/backnotprop/pstack (shallow)
-python3 scripts/check-upstream.py /path/to/monorepo        # local checkout (must contain pstack/skills/)
+python3 scripts/check-upstream.py                   # clone github.com/backnotprop/pstack (shallow)
+python3 scripts/check-upstream.py /path/to/monorepo # local checkout (must contain pstack/skills/)
 python3 scripts/check-upstream.py /path/to/pstack --out /tmp/report
 ```
 
