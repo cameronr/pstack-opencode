@@ -38,6 +38,8 @@ Pick one:
 
    Symlinks are absolute: moving the repo breaks them. Re-run the installer from the new location.
 
+    **Updating:** re-run the installer after `git pull` - it prunes items removed upstream and leaves your own skills/agents untouched. With `--link`, `git pull` alone suffices.
+
 3. **opencode2 only: point the config at the repo** (no copy at all):
 
    ```json
