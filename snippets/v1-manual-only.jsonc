@@ -1,5 +1,5 @@
 {
-  // pstack: make the 39 manual-only skills invisible to the model on opencode V1.
+  // pstack: make the 40 manual-only skills invisible to the model on opencode V1.
   //
   // V1 has no frontmatter mechanism for manual-only skills, so every installed
   // skill is advertised to the model. This fragment uses the one mechanism V1
@@ -53,6 +53,7 @@
           "principle-type-system-discipline": "deny",
           "recall": "deny",
           "reflect": "deny",
+          "setup-pstack": "deny",
           "show-me-your-work": "deny",
           "swarm": "deny",
           "tdd": "deny",

@@ -1,6 +1,9 @@
 ---
 name: setup-pstack
 description: Configure which subagent types pstack uses per role, and optionally which model each role's agents run on. Detects the agent types available in this session and writes ~/.config/opencode/pstack-roles.md, an override layer the skills read. Use for /setup-pstack, "configure pstack agents", or changing pstack's subagent choices.
+disable-model-invocation: true
+metadata:
+  opencode/autoinvoke: false
 slash: true
 ---
 
