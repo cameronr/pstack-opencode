@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Upstream drift check for the pstack opencode port.
 
-Fetches upstream pstack/ (from the cursor/plugins monorepo or a local
-checkout), applies the port's mechanical convention mapping
+Fetches upstream pstack/ (from the original backnotprop/pstack repo or a
+local checkout), applies the port's mechanical convention mapping
 (Cursor -> ZCode -> opencode, deterministic substitutions only), diffs the
 mapped copy against this repo's skills/ and agents/, and reports what
 upstream changed that we have not absorbed.
@@ -13,8 +13,8 @@ listed in SEMANTIC below and flagged [SEMANTIC] in the report so a human
 re-applies those edits when upstream touches them.
 
 Usage:
-    python3 scripts/check-upstream.py                    # default: github.com/cursor/plugins
-    python3 scripts/check-upstream.py /path/to/cursor/plugins
+    python3 scripts/check-upstream.py                    # default: github.com/backnotprop/pstack
+    python3 scripts/check-upstream.py /path/to/pstack-monorepo
     python3 scripts/check-upstream.py /path/to/pstack --out /tmp/report
 
 Exit status: 0 on a completed check (even when drift is found),
@@ -30,9 +30,8 @@ import sys
 import tempfile
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
-CLONE_TIMEOUT = 300  # seconds for the shallow sparse clone
-SPARSE_TIMEOUT = 120
-DEFAULT_SOURCE = "https://github.com/cursor/plugins"
+CLONE_TIMEOUT = 300  # seconds for the shallow clone
+DEFAULT_SOURCE = "https://github.com/backnotprop/pstack"
 
 # ---------------------------------------------------------------------------
 # Mechanical mapping. Applied in order to a copy of upstream pstack/.
@@ -242,10 +241,10 @@ def resolve_upstream_pstack(source: str, tmp: pathlib.Path) -> pathlib.Path:
     """Return the upstream pstack dir (must contain skills/)."""
     if re.match(r"^[A-Za-z][A-Za-z0-9+.-]*://", source) or source.startswith("git@") or source.endswith(".git"):
         dest = tmp / "clone"
-        run(["git", "clone", "--depth", "1", "--filter=blob:none", "--sparse", source, str(dest)],
+        run(["git", "clone", "--depth", "1", source, str(dest)],
             timeout=CLONE_TIMEOUT)
-        run(["git", "-C", str(dest), "sparse-checkout", "set", "pstack"], timeout=SPARSE_TIMEOUT)
-        pstack = dest / "pstack"
+        # in backnotprop/pstack (the original repo) pstack lives at the clone root
+        pstack = dest
     else:
         base = pathlib.Path(source).expanduser().resolve()
         if (base / "pstack" / "skills").is_dir():
@@ -253,7 +252,7 @@ def resolve_upstream_pstack(source: str, tmp: pathlib.Path) -> pathlib.Path:
         elif (base / "skills").is_dir():
             pstack = base
         else:
-            die(f"{source!r} is not a cursor/plugins checkout (no pstack/skills/) "
+            die(f"{source!r} is not a monorepo checkout (no pstack/skills/) "
                 f"nor a pstack dir (no skills/)")
     if not (pstack / "skills").is_dir():
         die(f"upstream pstack dir has no skills/: {pstack}")
@@ -318,7 +317,7 @@ def main() -> int:
         description="Diff upstream pstack (after the port's mechanical mapping) "
                     "against this repo and report drift.")
     ap.add_argument("source", nargs="?", default=DEFAULT_SOURCE,
-                    help=f"git URL (default {DEFAULT_SOURCE}), a local cursor/plugins "
+                    help=f"git URL (default {DEFAULT_SOURCE}), a local monorepo "
                          "checkout, or a local pstack dir")
     ap.add_argument("--out", default=str(REPO / "drift-report"),
                     help="directory for per-item .diff files (default: <repo>/drift-report/)")
