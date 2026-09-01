@@ -28,7 +28,7 @@ Pick one:
    ./install.sh
    ```
 
-   Copies `skills/*` into `~/.config/opencode/skills/` and `agents/*.md` into `~/.config/opencode/agent/`. Same-named entries are replaced; anything else in those directories is untouched. Safe to re-run. `--prefix DIR` installs elsewhere.
+   Copies `skills/*` into `~/.config/opencode/skills/` and `agents/*.md` into `~/.config/opencode/agents/`. Same-named entries are replaced; anything else in those directories is untouched. Safe to re-run. `--prefix DIR` installs elsewhere.
 
 2. **Symlink** (repo edits are picked up without reinstalling):
 
@@ -48,7 +48,7 @@ Pick one:
    }
    ```
 
-   Local dirs may be absolute, `~`, or project-relative. Use either this config entry or the installer, not both. `skills:` covers skills only: the agents still need the installer (`./install.sh` or `./install.sh --link`) or a manual copy of `agents/*.md` into `~/.config/opencode/agent/` (or the project's `.opencode/agent/`).
+   Local dirs may be absolute, `~`, or project-relative. Use either this config entry or the installer, not both. `skills:` covers skills only: the agents still need the installer (`./install.sh` or `./install.sh --link`) or a manual copy of `agents/*.md` into `~/.config/opencode/agents/` (or the project's `.opencode/agents/`).
 
 ## Behavior by version
 

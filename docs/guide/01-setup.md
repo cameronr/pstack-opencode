@@ -8,7 +8,7 @@ In this page you install pstack, pick which subagent types pstack uses, and run 
 ./install.sh
 ```
 
-This copies the skills into `~/.config/opencode/skills/` and the agents into `~/.config/opencode/agent/`. Same-named entries are replaced, anything else in those directories is untouched, and re-running is safe. `./install.sh --link` symlinks instead, so edits to the repo are picked up without reinstalling. On opencode2 you can skip the installer and point your `opencode.json` at the repo with `"skills": ["<path-to-repo>/skills"]` instead.
+This copies the skills into `~/.config/opencode/skills/` and the agents into `~/.config/opencode/agents/`. Same-named entries are replaced, anything else in those directories is untouched, and re-running is safe. `./install.sh --link` symlinks instead, so edits to the repo are picked up without reinstalling. On opencode2 you can skip the installer and point your `opencode.json` at the repo with `"skills": ["<path-to-repo>/skills"]` instead.
 
 ## Pick your subagent roles
 

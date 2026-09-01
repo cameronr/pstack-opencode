@@ -20,7 +20,7 @@ Alternatives rejected:
 
 | ZCode port | opencode |
 |---|---|
-| Plugin manifest (`.zcode-plugin/plugin.json`) + local marketplace | none; discovery by directory. `install.sh` copies or symlinks `skills/*` → `~/.config/opencode/skills/`, `agents/*.md` → `~/.config/opencode/agent/`. opencode2 additionally accepts `skills: ["<dir-or-url>"]` in `opencode.json` as an alternative to copying |
+| Plugin manifest (`.zcode-plugin/plugin.json`) + local marketplace | none; discovery by directory. `install.sh` copies or symlinks `skills/*` → `~/.config/opencode/skills/`, `agents/*.md` → `~/.config/opencode/agents/`. opencode2 additionally accepts `skills: ["<dir-or-url>"]` in `opencode.json` as an alternative to copying |
 | `~/.zcode/pstack-roles.md` (roles file) | `~/.config/opencode/pstack-roles.md` (same shape, same on-demand read semantics) |
 | Subagent types (`general-purpose`, `Explore`, plugin-contributed types) | opencode built-ins (`build`, `plan`, `general`, `explore`) + pstack's own agents from `agents/` |
 | Per-subagent model: not available (session model only) | available: `agent.<name>.model` in `opencode.json`, or `model` frontmatter in the agent file (frontmatter wins). `/setup-pstack` gained an optional per-role model step on top of the type mapping |

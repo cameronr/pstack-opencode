@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Install pstack skills and agents into an opencode config directory.
 #
-#   ./install.sh              copy skills/ into $PREFIX/skills/, agents/ into $PREFIX/agent/
+#   ./install.sh              copy skills/ into $PREFIX/skills/, agents/ into $PREFIX/agents/
 #   ./install.sh --link       symlink instead of copy (repo edits show up immediately)
 #   ./install.sh --prefix DIR install into DIR instead of $HOME/.config/opencode
 #   ./install.sh -y           skip the confirmation prompt (for scripting)
@@ -19,7 +19,7 @@ Install pstack into an opencode config directory.
   -y, --yes     Skip the confirmation prompt (for scripting).
   -h, --help    Show this help.
 
-Skills are installed to $PREFIX/skills/, agents to $PREFIX/agent/.
+Skills are installed to $PREFIX/skills/, agents to $PREFIX/agents/.
 Entries with the same name are replaced; entries that are not pstack's
 are never touched. Re-runs prune items that no longer exist in the repo
 (tracked via $PREFIX/.pstack-manifest). Safe to re-run.
@@ -49,7 +49,7 @@ REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 SKILLS_SRC="$REPO/skills"
 AGENTS_SRC="$REPO/agents"
 SKILLS_DST="$PREFIX/skills"
-AGENTS_DST="$PREFIX/agent"
+AGENTS_DST="$PREFIX/agents"
 MANIFEST="$PREFIX/.pstack-manifest"
 
 [ -d "$SKILLS_SRC" ] || { echo "error: $SKILLS_SRC not found" >&2; exit 1; }
@@ -74,8 +74,8 @@ if [ -f "$MANIFEST" ]; then
     case "$entry" in
       skills/*)
         [ -e "$SKILLS_SRC/${entry#skills/}" ] || PRUNED+=("$entry") ;;
-      agent/*)
-        [ -e "$AGENTS_SRC/${entry#agent/}" ] || PRUNED+=("$entry") ;;
+      agents/*)
+        [ -e "$AGENTS_SRC/${entry#agents/}" ] || PRUNED+=("$entry") ;;
     esac
   done < "$MANIFEST"
 fi
@@ -134,7 +134,7 @@ done
     printf 'skills/%s\n' "$name"
   done
   for name in ${AGENTS[@]+"${AGENTS[@]}"}; do
-    printf 'agent/%s\n' "$name"
+    printf 'agents/%s\n' "$name"
   done
 } | sort > "$MANIFEST"
 
@@ -154,6 +154,6 @@ Next steps:
      config at the repo instead:
        "skills": ["<path-to-this-repo>/skills"]
      The "skills" entry covers skills only. Agents still need this
-     installer (or a manual copy of agents/*.md into the agent dir),
+     installer (or a manual copy of agents/*.md into the agents dir),
      so edits to the repo are picked up directly.
 EOF

@@ -16,8 +16,8 @@ opencode runs every subagent on the session model unless its agent file or its c
 Enumerate the `subagent_type` values you can pass to a `task` call in this session. The dependable sources, in order:
 
 1. opencode built-ins always present: `build`, `plan`, `general`, `explore`. pstack also ships its own agents in its repo's `agents/` dir: `poteto-agent`, `comment-sicko`, `code-reviewer`, `code-architect`; these must be installed for the role defaults in the skills to resolve.
-2. Types contributed by enabled plugins and declared in this session. pstack's own agents (`poteto-agent`, `comment-sicko`, `code-reviewer`, `code-architect`) are not a plugin contribution: they arrive via the installer into `~/.config/opencode/agent/` (or a plugin install, if used).
-3. Agent definitions opencode loads outside plugins (for example `~/.config/opencode/agent/`).
+2. Types contributed by enabled plugins and declared in this session. pstack's own agents (`poteto-agent`, `comment-sicko`, `code-reviewer`, `code-architect`) are not a plugin contribution: they arrive via the installer into `~/.config/opencode/agents/` (or a plugin install, if used).
+3. Agent definitions opencode loads outside plugins (for example `~/.config/opencode/agents/`).
 
 Never write a type you have not confirmed exists. A role line pointing at a type the `task` tool rejects breaks every delegation that reads it.
 
