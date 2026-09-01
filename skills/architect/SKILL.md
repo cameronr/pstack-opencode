@@ -4,6 +4,7 @@ description: "Sketch types, signatures, and module structure before code, then s
 disable-model-invocation: true
 metadata:
   opencode/autoinvoke: false
+slash: true
 ---
 
 # Architect

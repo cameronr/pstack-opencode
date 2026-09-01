@@ -4,6 +4,7 @@ description: "Reconstruct your recent working context from your own chat history
 disable-model-invocation: true
 metadata:
   opencode/autoinvoke: false
+slash: true
 ---
 
 # Recall

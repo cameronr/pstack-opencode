@@ -4,6 +4,7 @@ description: "Use for \"interrogate\", \"adversarial review\", \"multi-subagent 
 disable-model-invocation: true
 metadata:
   opencode/autoinvoke: false
+slash: true
 ---
 
 # Interrogate

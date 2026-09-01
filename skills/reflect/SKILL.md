@@ -4,6 +4,7 @@ description: Spawn three parallel review subagents over the active transcript, s
 disable-model-invocation: true
 metadata:
   opencode/autoinvoke: false
+slash: true
 ---
 
 # Reflect

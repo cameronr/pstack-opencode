@@ -4,6 +4,7 @@ description: "Spawn Comment Sicko, fix accepted findings, and offer encodings fo
 disable-model-invocation: true
 metadata:
   opencode/autoinvoke: false
+slash: true
 ---
 
 # No comments

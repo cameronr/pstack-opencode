@@ -4,6 +4,7 @@ description: "Generate a project-local verification skill that drives your app t
 disable-model-invocation: true
 metadata:
   opencode/autoinvoke: false
+slash: true
 ---
 
 # Create a verification skill

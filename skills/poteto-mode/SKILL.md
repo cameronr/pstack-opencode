@@ -8,6 +8,7 @@ mode: true
 icon: crown
 color: yellow
 reminder: New task? Playbook match or rigor needed -> apply /poteto-mode. Casual turn or user opts out -> don't.
+slash: true
 ---
 
 # Poteto mode

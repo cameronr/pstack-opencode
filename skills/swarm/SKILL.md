@@ -4,6 +4,7 @@ description: "Fan out N parallel workers, drain them, and return one report. Use
 disable-model-invocation: true
 metadata:
   opencode/autoinvoke: false
+slash: true
 ---
 
 # Swarm

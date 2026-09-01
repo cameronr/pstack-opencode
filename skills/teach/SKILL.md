@@ -4,6 +4,7 @@ description: "Explain a body of work plainly so a person actually understands it
 disable-model-invocation: true
 metadata:
   opencode/autoinvoke: false
+slash: true
 ---
 
 # Teach

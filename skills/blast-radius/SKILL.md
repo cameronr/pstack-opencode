@@ -4,6 +4,7 @@ description: "Find what a change could break somewhere else before it ships, bey
 disable-model-invocation: true
 metadata:
   opencode/autoinvoke: false
+slash: true
 ---
 
 # Blast radius

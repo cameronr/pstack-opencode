@@ -4,6 +4,7 @@ description: "Use only when the user explicitly asks for TDD, a failing test, or
 disable-model-invocation: true
 metadata:
   opencode/autoinvoke: false
+slash: true
 ---
 
 # TDD Bug Fix

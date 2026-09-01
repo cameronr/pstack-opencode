@@ -4,6 +4,7 @@ description: "Layered technical-writing standard: Diátaxis structure, Google de
 disable-model-invocation: true
 metadata:
   opencode/autoinvoke: false
+slash: true
 ---
 
 # Technical writing

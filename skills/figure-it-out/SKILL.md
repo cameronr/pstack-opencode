@@ -4,6 +4,7 @@ description: "Design an auditable playbook when no narrower one fits: a large mi
 disable-model-invocation: true
 metadata:
   opencode/autoinvoke: false
+slash: true
 ---
 
 # Figure it out

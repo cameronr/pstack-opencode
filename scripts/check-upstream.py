@@ -174,19 +174,28 @@ MAP_RULES = LAYER1_CURSOR_TO_ZCODE + LAYER2_ZCODE_TO_OPENCODE
 DMI_RE = re.compile(r"(?m)^(disable-model-invocation: true)\n")
 DMI_INSERT = r"\1\nmetadata:\n  opencode/autoinvoke: false\n"
 
-# V2 slash commands: the 5 skills with slash commands get an explicit
-# `slash: true` inserted directly after the description line (setup-pstack is
-# manual-only but keeps its slash command). The V2 TUI slash palette only
-# lists skills that set the key explicitly (no default); V1 ignores it (and
-# V1 never lists skills in the / palette at all).
-SLASH_SKILLS = {"how", "why", "setup-pstack", "typescript-best-practices", "unslop"}
+# V2 slash commands: the 23 skills whose upstream README documents slash
+# usage (4 model-invocable plus 19 manual-only) get an explicit `slash: true`
+# inserted as the LAST frontmatter key, reproducing the repo's key order:
+# name, description, then dmi, metadata, slash for dmi files. The V2 TUI
+# slash palette only lists skills that set the key explicitly (no default);
+# V1 ignores it (and V1 never lists skills in the / palette at all).
+SLASH_SKILLS = {
+    "poteto-mode", "how", "why", "recall", "blast-radius", "architect",
+    "arena", "swarm", "interrogate", "automate-me", "setup-pstack",
+    "reflect", "teach", "tdd", "no-comments", "typescript-best-practices",
+    "figure-it-out", "show-me-your-work", "create-verification-skill",
+    "maintain-verification-skill", "unslop", "bro", "technical-writing",
+}
 DESC_RE = re.compile(r"(?m)^(description: .*)\n")
-SLASH_INSERT = r"\1\nslash: true\n"
+FM_RE = re.compile(r"(?ms)^---\n(.*?)\n---\n")
+SLASH_INSERT = r"---\n\1\nslash: true\n---\n"
 
 # Manual-only skills with no upstream disable-model-invocation key: the dual
 # frontmatter (dmi line + opencode autoinvoke opt-out) is inserted after the
-# description line during mapping. Run after the slash insertion so the
-# resulting key order is name, description, dmi, metadata, slash.
+# description line during mapping. The slash insertion targets the end of the
+# frontmatter, so the resulting key order is name, description, dmi,
+# metadata, slash regardless of insertion order.
 MANUAL_ONLY_INSERT = {"setup-pstack"}
 MANUAL_ONLY_INSERT_RE = r"\1\ndisable-model-invocation: true\nmetadata:\n  opencode/autoinvoke: false\n"
 
@@ -288,7 +297,7 @@ def map_text(text: str, is_skill_md: bool, skill_name: str = "") -> str:
     if is_skill_md:
         text = DMI_RE.sub(DMI_INSERT, text)
         if skill_name in SLASH_SKILLS:
-            text = DESC_RE.sub(SLASH_INSERT, text, count=1)
+            text = FM_RE.sub(SLASH_INSERT, text, count=1)
         if skill_name in MANUAL_ONLY_INSERT:
             text = DESC_RE.sub(MANUAL_ONLY_INSERT_RE, text, count=1)
     return text

@@ -4,6 +4,7 @@ description: "Keep a reviewable decision trail for long-running or unattended wo
 disable-model-invocation: true
 metadata:
   opencode/autoinvoke: false
+slash: true
 ---
 
 # Show me your work
