@@ -38,7 +38,9 @@ DEFAULT_SOURCE = "https://github.com/backnotprop/pstack"
 #
 # Layer 1 (Cursor -> ZCode): verbatim substitution lists from the ZCode
 # port's one-shot scripts (pstack-zcode/scripts/adapt-phase1.py and
-# adapt-phase2a.py).
+# adapt-phase2a.py), except the transcript rules, which map Cursor ->
+# opencode directly (opencode stores sessions in a SQLite DB; the ZCode
+# intermediate had no equivalent).
 # Layer 2 (ZCode -> opencode): the concept mapping from
 # docs/DESIGN-opencode-port.md plus verified conventions (tool names,
 # subagent types, paths, dual frontmatter).
@@ -86,28 +88,39 @@ LAYER1_CURSOR_TO_ZCODE = [
     # plugin-installed skill paths
     ("plugin-installed paths under `~/.cursor/plugins/`",
      "plugin-installed paths under `~/.zcode/cli/plugins/cache/`"),
-    # transcript globs
+    # transcript scope: opencode stores sessions as rows in a SQLite DB, not
+    # files in a directory, so "glob the transcripts dir" becomes "read the
+    # workspace's sessions"
     ("do not glob across `~/.cursor/projects/*/`, that crosses workspace boundaries and reads private chats from unrelated projects",
-     "do not glob across other workspaces' session directories, that crosses workspace boundaries and reads private chats from unrelated projects"),
+     "do not read other workspaces' sessions, that crosses workspace boundaries and reads private chats from unrelated projects"),
     ("Do not glob across `~/.cursor/projects/*/`; that crosses workspace boundaries and reads private chats from unrelated projects.",
-     "Do not glob across other workspaces' session directories; that crosses workspace boundaries and reads private chats from unrelated projects."),
+     "Do not read other workspaces' sessions; that crosses workspace boundaries and reads private chats from unrelated projects."),
     ("do not glob across `~/.cursor/projects/*/`, that crosses workspace boundaries",
-     "do not glob across other workspaces' session directories, that crosses workspace boundaries"),
+     "do not read other workspaces' sessions, that crosses workspace boundaries"),
     ("Don't glob across `~/.cursor/projects/*/`; that reads unrelated private chats.",
-     "Don't glob across other workspaces' session directories; that reads unrelated private chats."),
+     "Don't read other workspaces' sessions; that reads unrelated private chats."),
     ("Don't glob across `~/.cursor/projects/*/`. That crosses workspace boundaries and reads private chats from unrelated projects.",
-     "Don't glob across other workspaces' session directories. That crosses workspace boundaries and reads private chats from unrelated projects."),
-    # transcript directory naming
+     "Don't read other workspaces' sessions. That crosses workspace boundaries and reads private chats from unrelated projects."),
+    ("Do not glob across `~/.cursor/projects/*/`. That crosses workspace boundaries and reads private chats from unrelated projects.",
+     "Do not read other workspaces' sessions. That crosses workspace boundaries and reads private chats from unrelated projects."),
+    # transcript location: the ZCode port mapped these to a `~/.zcode/cli/`
+    # directory that opencode never had; map straight to the session DB
     ("The system prompt names the workspace's `agent-transcripts/` directory. Use only that path.",
-     "Locate the current workspace's session transcripts (ZCode stores session data under `~/.zcode/cli/`). Use only the current workspace's paths."),
-    ("the active workspace's `agent-transcripts/` directory (the system prompt names the path; ",
-     "the active workspace's session transcripts (stored under `~/.zcode/cli/`; "),
-    ("the active workspace's `agent-transcripts/` directory (the system prompt names the path)",
-     "the active workspace's session transcripts (stored under `~/.zcode/cli/`)"),
-    ("the active workspace's `agent-transcripts/` directory (the system prompt names this path)",
-     "the active workspace's session transcripts (stored under `~/.zcode/cli/`)"),
+     "The current workspace's sessions live in `~/.local/share/opencode/opencode.db` (query with `sqlite3` in read-only mode). Use only the current workspace's sessions."),
+    ("The system prompt names the active workspace's `agent-transcripts/` directory; use that path.",
+     "The active workspace's sessions live in `~/.local/share/opencode/opencode.db` (query with `sqlite3` in read-only mode); use that workspace's sessions."),
+    # parenthetical variants, most specific first (a shorter left side is a
+    # prefix of a longer one and would eat it)
     ("the active workspace's `agent-transcripts/` directory (the system prompt names the path; use that path)",
-     "the active workspace's session transcripts (stored under `~/.zcode/cli/`; use only that workspace)"),
+     "the active workspace's sessions in `~/.local/share/opencode/opencode.db` (query with `sqlite3` in read-only mode; use only that workspace)"),
+    ("the active workspace's `agent-transcripts/` directory (the system prompt names the path; ",
+     "the active workspace's sessions in `~/.local/share/opencode/opencode.db` (query with `sqlite3` in read-only mode; "),
+    ("the active workspace's `agent-transcripts/` directory (the system prompt names this path)",
+     "the active workspace's sessions in `~/.local/share/opencode/opencode.db` (query with `sqlite3` in read-only mode)"),
+    ("the active workspace's `agent-transcripts/` directory (the system prompt names the path)",
+     "the active workspace's sessions in `~/.local/share/opencode/opencode.db` (query with `sqlite3` in read-only mode)"),
+    ("reading local transcripts under `agent-transcripts/`",
+     "reading local transcripts"),
     # worktree location example
     ("since a hand-typed `myrepo-worktrees/x` misses one that lives at `.cursor/worktrees/myrepo/x`",
      "since a hand-typed `myrepo-worktrees/x` misses one that agent tooling placed under its own state directory"),
@@ -119,7 +132,10 @@ LAYER2_ZCODE_TO_OPENCODE = [
      "a subagent spawned with `background: true`"),
     ("Background agents cannot see this chat", "Subagents cannot see this chat"),
     ("wipe AskUserQuestion state", "wipe `question` state"),
-    # user-question tool
+    # user-question tool (phrase-level rules first: the bare-name rule below
+    # doubles or drops the verb in these constructions)
+    ("About to `AskUserQuestion` on a", "About to use the `question` tool on a"),
+    ("Prefer AskUserQuestion over free text", "Prefer the `question` tool over free text"),
     ("the `AskUserQuestion` tool", "the `question` tool"),
     ("`AskUserQuestion`", "the `question` tool"),
     ("run_in_background: true", "background: true"),
