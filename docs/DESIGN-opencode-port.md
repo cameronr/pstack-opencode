@@ -25,7 +25,7 @@ Alternatives rejected:
 | Subagent types (`general-purpose`, `Explore`, plugin-contributed types) | opencode built-ins (`build`, `plan`, `general`, `explore`) + pstack's own agents from `agents/` |
 | Per-subagent model: not available (session model only) | available: `agent.<name>.model` in `opencode.json`, or `model` frontmatter in the agent file (frontmatter wins). `/setup-pstack` gained an optional per-role model step on top of the type mapping |
 | Manual-only skills: frontmatter `disable-model-invocation` ignored by the harness | V1: ignored (all 44 advertised; see gap below). V2: new frontmatter `metadata: opencode/autoinvoke: false` on the 39 manual-only skills |
-| Scheduled automations (Cron tools) | same Cron tools, now opencode built-ins (referenced by the overnight/autonomous-run material) |
+| Scheduled automations (ZCode's cron tools) | none: opencode has no equivalent, so the overnight/autonomous-run material documents an OS-level wake (a system cron entry or launchd agent running `opencode run` headless) |
 
 ### Lesson carried over: diversity by type, not model
 

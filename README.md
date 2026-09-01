@@ -9,6 +9,15 @@ pstack is a set of rigorous agent workflows: engineering principles, playbooks, 
   - Manual-only include `/poteto-mode`, `/architect`, `/arena`, `/swarm`, `/interrogate`, `/tdd`, the 21 `principle-*` skills, and the rest.
 - **4 agents** in `agents/`: `poteto-agent` (the poteto-mode delegate), `comment-sicko`, `code-reviewer`, `code-architect`.
 
+## Prerequisites
+
+- `bun` - the poteto-mode scripts (`orch`, `watch-pr`).
+- `gh` - `worktree-audit`, `watch-pr`, `opening-a-pr`.
+- `sqlite3` - the transcript-reading skills (`recall`, `reflect`, `automate-me`, `show-me-your-work`, `session-pickup`, `eval`, `worktree-audit`).
+- `gt` (Graphite) - the `orchestrate` playbook.
+
+Some flows route to an external `skill-creator` skill (`reflect`, `automate-me`, `authoring-a-skill`) that is not part of this repo; install it separately if you use those flows.
+
 ## Install
 
 Pick one:
@@ -27,6 +36,8 @@ Pick one:
    ./install.sh --link
    ```
 
+   Symlinks are absolute: moving the repo breaks them. Re-run the installer from the new location.
+
 3. **opencode2 only: point the config at the repo** (no copy at all):
 
    ```json
@@ -35,7 +46,7 @@ Pick one:
    }
    ```
 
-   Local dirs may be absolute, `~`, or project-relative. Agents still need to live where opencode finds them (`~/.config/opencode/agent/` or the project's `.opencode/agent/`): symlink the `agents/*.md` files there, or run `./install.sh --link` (its skill symlinks are harmless duplicates of the config entry).
+   Local dirs may be absolute, `~`, or project-relative. Use either this config entry or the installer, not both. `skills:` covers skills only: the agents still need the installer (`./install.sh` or `./install.sh --link`) or a manual copy of `agents/*.md` into `~/.config/opencode/agent/` (or the project's `.opencode/agent/`).
 
 ## Behavior by version
 

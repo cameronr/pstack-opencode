@@ -87,6 +87,7 @@ git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt;
 			ts_ms=$(sqlite3 "file:$db?mode=ro" "SELECT MAX(ts) FROM ($terms);" 2>/dev/null)
 			if [ -n "$ts_ms" ] && [ "$ts_ms" != "NULL" ] && [ "$ts_ms" -gt 0 ] 2>/dev/null; then
 				last_ts=$((ts_ms / 1000))
+				# macOS BSD date; Linux needs `date -d @<epoch>`.
 				last=$(date -r "$last_ts" '+%Y-%m-%d' 2>/dev/null); fi
 		fi
 	fi

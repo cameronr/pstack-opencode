@@ -16,7 +16,7 @@ opencode runs every subagent on the session model unless its agent file or its c
 Enumerate the `subagent_type` values you can pass to a `task` call in this session. The dependable sources, in order:
 
 1. opencode built-ins always present: `build`, `plan`, `general`, `explore`. pstack also ships its own agents in its repo's `agents/` dir: `poteto-agent`, `comment-sicko`, `code-reviewer`, `code-architect`; these must be installed for the role defaults in the skills to resolve.
-2. Types contributed by enabled plugins and declared in this session (pstack contributes its `agents/` dir: `poteto-agent`, `comment-sicko`, `code-reviewer`, `code-architect`).
+2. Types contributed by enabled plugins and declared in this session. pstack's own agents (`poteto-agent`, `comment-sicko`, `code-reviewer`, `code-architect`) are not a plugin contribution: they arrive via the installer into `~/.config/opencode/agent/` (or a plugin install, if used).
 3. Agent definitions opencode loads outside plugins (for example `~/.config/opencode/agent/`).
 
 Never write a type you have not confirmed exists. A role line pointing at a type the `task` tool rejects breaks every delegation that reads it.
@@ -40,26 +40,25 @@ Write `~/.config/opencode/pstack-roles.md`, overwriting the whole file so re-run
 ```markdown
 # pstack per-role subagent choices (overrides skill defaults)
 
-One line per role, `role: type[, type...]`. Delete a line to fall back to the skill default.
+One line per role or role group, `role[, role...]: type[, type...]`. Delete a line to fall back to the skill default.
 
 feature, refactoring: poteto-agent
 bug-fix: poteto-agent
 perf-issue: poteto-agent
 hillclimb: poteto-agent
 judgment and prose: general
-hardest tasks: poteto-agent
-how explorer: explore
-how explainer: general
-how critics: code-reviewer, poteto-agent, general
-why investigators: explore
-why synthesizer: general
-reflect tooling: code-reviewer
-reflect judgment, divergent, synthesizer: general
-arena runners: poteto-agent, code-reviewer, general
-arena cross-judge pool: code-reviewer, general
+how-explorer: explore
+how-explainer: general
+how-critics: code-architect, code-reviewer, poteto-agent, general
+why-investigators: general
+why-synthesizer: general
+reflect-tooling: code-reviewer
+reflect-judgment: general
+arena runners: poteto-agent, code-reviewer, code-architect, general
+arena cross-judge pool: code-reviewer, code-architect, general
 swarm workers: poteto-agent
-architect runners: code-architect, poteto-agent, general
-interrogate reviewers: code-reviewer, code-architect, general
+architect runners: code-architect, poteto-agent, code-reviewer, general
+interrogate reviewers: code-reviewer, code-architect, poteto-agent, general
 ```
 
 ### 6. Models (optional)

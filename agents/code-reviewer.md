@@ -1,16 +1,7 @@
 ---
 name: code-reviewer
-description: Correctness-first code reviewer. Use for diff review, regression hunting, and standards-drift checks. Read-only; reports only, never fixes.
+description: Correctness-first code reviewer. Use for diff review, regression hunting, and standards-drift checks. Reports only, never fixes.
 mode: subagent
-permission:
-  "*": deny
-  grep: allow
-  glob: allow
-  list: allow
-  bash: allow
-  webfetch: allow
-  websearch: allow
-  read: allow
 ---
 
 # Code Reviewer

@@ -1,16 +1,7 @@
 ---
 name: code-architect
-description: Architecture critic for module boundaries, coupling, invariants, and trade-offs. Read-only; proposes, never edits.
+description: Architecture critic for module boundaries, coupling, invariants, and trade-offs. Proposes, never edits.
 mode: subagent
-permission:
-  "*": deny
-  grep: allow
-  glob: allow
-  list: allow
-  bash: allow
-  webfetch: allow
-  websearch: allow
-  read: allow
 ---
 
 # Code Architect

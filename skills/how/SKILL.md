@@ -106,7 +106,7 @@ Run the full explain flow above (Steps 1-4). You must understand the architectur
 After the explanation is complete, spawn one architectural critic per entry in your configured how-critics list (defaults `code-architect`, `code-reviewer`, `poteto-agent`, `general`), all in a single message.
 
 For each critic:
-- `subagent_type`: one entry from the configured how-critics list. Read-only types (`code-reviewer`, `code-architect`) see the code but cannot edit; the lead should add a stronger judgment type when the architecture warrants deeper analysis.
+- `subagent_type`: one entry from the configured how-critics list. The critic types review and report; they do not edit even though they could; the lead should add a stronger judgment type when the architecture warrants deeper analysis.
 
 Read `references/critic-prompt.md` for the prompt template. Each critic gets:
 1. The explanation from Step 1 (so they don't re-explore)

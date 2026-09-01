@@ -45,7 +45,7 @@ For each candidate, check that its first user message contains the conversation'
 
 ### 2. Spawn three reviewers in parallel
 
-One message, three `task` calls, one distinct `subagent_type` each. Reviewers need MCP access for context lookups (tickets, chat threads, observability traces referenced in the transcript), so use types with full tool access. The prompt forbids file writes; the parent applies edits.
+One message, three `task` calls, one per reviewer. Distinct types are preferable (configure via `~/.config/opencode/pstack-roles.md`), but the defaults may share a type. Reviewers need MCP access for context lookups (tickets, chat threads, observability traces referenced in the transcript), so use types with full tool access. The prompt forbids file writes; the parent applies edits.
 
 | Lens | `subagent_type` | Prompt template |
 |---|---|---|

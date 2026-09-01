@@ -91,8 +91,10 @@ Next steps:
   1. Restart opencode so it picks the new skills and agents up.
   2. Optional: run the setup-pstack skill (/setup-pstack) to configure
      per-role subagent types and, if you want, per-role models.
-  3. On opencode2 you can skip this installer entirely and point your
+  3. On opencode2 you can skip this installer for skills and point your
      config at the repo instead:
        "skills": ["<path-to-this-repo>/skills"]
-     plus the agent dir, so edits to the repo are picked up directly.
+     The "skills" entry covers skills only. Agents still need this
+     installer (or a manual copy of agents/*.md into the agent dir),
+     so edits to the repo are picked up directly.
 EOF
