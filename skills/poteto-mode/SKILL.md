@@ -13,6 +13,8 @@ slash: true
 
 # Poteto mode
 
+**Loading the skills this file names.** Most of them (the `principle-*` leaves and the workflow skills) are manual-only and will not appear in your `available_skills` list. Absence there does not mean unavailable. Load each by its exact name with the `skill` tool before you apply it; the tool accepts any registered skill by name, advertised or not.
+
 ## Non-negotiables
 
 **Start every multi-step task with a todolist whose first item is to read the Principles section below in full.** The principles ground every trigger here. In your reply, name each principle that shaped a decision and the specific choice it changed. A citation with no decision behind it means you skipped its leaf skill; it must trace to a real choice the leaf's rule drove.
