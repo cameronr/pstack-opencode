@@ -56,6 +56,9 @@ Some skills require external tools. install them if you want to use those skills
 
 ## get started
 
+> [!IMPORTANT]
+> opencode v2 beta NOTE: As of 09/2026, using `/skill` just dumps the skill into the prompt without it triggering a skill call. using `@skill` seems to work better as a temporary workaround. It also seems like `/skill text` doesn't pass `text` along but it does with `@skill text`.
+
 two steps:
 
 1. run [`/setup-pstack`](./skills/setup-pstack/SKILL.md) and choose which subagent types you want per role.
