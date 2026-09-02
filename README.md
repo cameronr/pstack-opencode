@@ -1,10 +1,10 @@
 # pstack (opencode port)
 
-> **this is the opencode port of [poteto's pstack](https://github.com/backnotprop/pstack) (MIT).** all credit for the skills, playbooks and principles goes to [poteto](https://x.com/poteto); the code is built off of the [ZCode port](https://github.com/Luks3110/pstack-zcode), and this repo swaps the packaging for opencode (directory-based install, subagent types, per-role models).
+> **this is an opencode port of [poteto's pstack](https://github.com/backnotprop/pstack).** all credit for the skills, playbooks and principles goes to [poteto](https://x.com/poteto); the code is built off of the [ZCode port](https://github.com/Luks3110/pstack-zcode), and this repo swaps the packaging for opencode (directory-based install, subagent types, per-role models).
 
 i'm [poteto](https://x.com/poteto). i'm not a president or ceo, but i've worked with millions of lines of code at Meta, Netflix, and Cursor. i'm also on the react core team where i help build and maintain react compiler.
 
-there's a growing sense that ai writes too much slop code. i agree. i don't want to ship like a team of twenty slop artists. throughput without quality is not a goal i aspire to. if you want to go fast, go deep first. 
+there's a growing sense that ai writes too much slop code. i agree. i don't want to ship like a team of twenty slop artists. throughput without quality is not a goal i aspire to. if you want to go fast, go deep first.
 
 **pstack is my answer.** these are the same skills i use everyday to ship high quality code. this turns your agent into a real engineering team. the goal is not to maximize loc, in fact it's the opposite. pstack helps you write less, but higher quality code.
 
@@ -12,7 +12,7 @@ there's a growing sense that ai writes too much slop code. i agree. i don't want
 
 **opencode runs every subagent on the session model by default.** the multi-model routing of the original becomes routing by subagent type: a reviewer type reads a diff differently than an architect type or a general delegate, and the panels fan out across those postures. [`/setup-pstack`](./skills/setup-pstack/SKILL.md) maps every role to a type, and can pin per-role models in `opencode.json` if you want them.
 
-fork it. improve it. make it yours. PRs are welcome! 
+fork it. improve it. make it yours. PRs are welcome!
 
 ## install
 
@@ -46,6 +46,8 @@ that entry covers skills only; the agents still need the installer (or a manual 
 restart opencode after installing.
 
 ### prerequisites
+
+Some skills require external tools. install them if you want to use those skills:
 
 - `bun` - the poteto-mode scripts (`orch`, `watch-pr`).
 - `gh` - `worktree-audit`, `watch-pr`, `opening-a-pr`.
@@ -171,7 +173,6 @@ the full rules and playbooks live in [`skills/poteto-mode/SKILL.md`](./skills/po
 
 mostly i type [`/poteto-mode`](./skills/poteto-mode/SKILL.md) at the start of a task and let it route to a playbook. the other skills fire as the steps need them. a few i reach for directly.
 
-
 <details>
 <summary>all the examples</summary>
 
@@ -266,7 +267,7 @@ install those alongside pstack if you want the full set.
 
 ## why are there no planning skills?
 
-opencode already has a plan mode which works great with pstack. but personally, i don't believe in planning. the best spec is code. if you do want to make a plan, [`/poteto-mode`](./skills/poteto-mode/SKILL.md) covers it, but it's not a default. 
+opencode already has a plan mode which works great with pstack. but personally, i don't believe in planning. the best spec is code. if you do want to make a plan, [`/poteto-mode`](./skills/poteto-mode/SKILL.md) covers it, but it's not a default.
 
 ## make it yours
 
@@ -287,7 +288,7 @@ opencode has no scheduled-automation equivalent today, so the pack is reference 
 ### behavior by version
 
 - **V1** advertises all 44 skills to the model; there is no frontmatter mechanism for manual-only skills. if you want the 40 manual-only skills invisible to the model, merge [snippets/v1-manual-only.jsonc](snippets/v1-manual-only.jsonc) into your `opencode.json`. V1 never lists skills in the `/` palette (the TUI filters skill-sourced commands out by design); reach them via the `/skills` dialog or by asking in chat.
-- **opencode2** honors the `metadata: opencode/autoinvoke: false` frontmatter in the 40 manual-only skills, so they stay out of the model's advertised list. the current opencode2 beta only lists a skill in the `/` palette when its frontmatter sets `slash: true` explicitly (the docs claim a default of true, but the beta requires it explicit); 23 skills set it (the 4 model-invocable ones plus 19 manual-only workflow skills, per the upstream README's slash usage), so 23 appear as `/` commands. the 21 `principle-*` skills are not slash commands; they are reached via the `/skills` dialog. the V1 snippet is a no-op there.
+- **V2 beta** honors the `metadata: opencode/autoinvoke: false` frontmatter in the 40 manual-only skills, so they stay out of the model's advertised list. the current opencode2 beta only lists a skill in the `/` palette when its frontmatter sets `slash: true` explicitly (the docs claim a default of true, but the beta requires it explicit); 23 skills set it (the 4 model-invocable ones plus 19 manual-only workflow skills, per the upstream README's slash usage), so 23 appear as `/` commands. the 21 `principle-*` skills are not slash commands; they are reached via the `/skills` dialog. the V1 snippet is a no-op there.
 
 ### what's not here
 
